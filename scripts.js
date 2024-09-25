@@ -33,10 +33,10 @@
     <a-entity camera></a-entity>
   </a-scene>
 
-  <!-- تعريف النموذج الثلاثي الأبعاد -->
+  <!-- تعريف النموذج ثلاثي الأبعاد -->
   <a-assets>
-    <!-- رابط تحميل النموذج بصيغة .glTF -->
-    <a-asset-item id="3d-model" src="path/to/your/model.gltf"></a-asset-item>
+    <!-- تحميل النموذج من GitHub باستخدام رابط Raw -->
+    <a-asset-item id="3d-model" src="https://raw.githubusercontent.com/aryaishassds/GLB/main/%D8%AD%D9%84%D8%B2%D9%88%D9%86.glb"></a-asset-item>
   </a-assets>
 
 </body>
