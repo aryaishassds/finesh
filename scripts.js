@@ -1,104 +1,43 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const fileInput = document.getElementById('file-input');
-    const modelEntity = document.getElementById('uploaded-model');
-    const worldView = document.getElementById('world-view');
-    const viewOption = document.getElementById('view-option');
-    const modelFrame = document.getElementById('model-frame');
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AR with QR Code</title>
 
-    fileInput.addEventListener('change', function(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const modelUrl = e.target.result;
+  <!-- تضمين مكتبة A-Frame و AR.js -->
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.7.2/aframe/build/aframe-ar.min.js"></script>
 
-                // تحديث النموذج ثلاثي الأبعاد في A-Frame
-                modelEntity.setAttribute('gltf-model', modelUrl);
-                worldView.setAttribute('gltf-model', modelUrl);
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: black;
+    }
+  </style>
+</head>
+<body>
 
-                // تحديث الـ iframe
-                const iframeContent = `
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <meta charset="UTF-8">
-                        <title>عرض نموذج ثلاثي الأبعاد</title>
-                        <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-                    </head>
-                    <body>
-                        <a-scene>
-                            <a-entity position="0 0 0" scale="1 1 1" gltf-model="${modelUrl}"></a-entity>
-                            <a-camera position="0 1.6 3"></a-camera>
-                        </a-scene>
-                    </body>
-                    </html>
-                `;
-                const blob = new Blob([iframeContent], { type: 'text/html' });
-                modelFrame.src = URL.createObjectURL(blob);
-            };
-            reader.readAsDataURL(file);
-        }
-    });
+  <!-- مشهد AR -->
+  <a-scene embedded arjs>
 
-    viewOption.addEventListener('change', function(event) {
-        const option = event.target.value;
-        if (option === 'world') {
-            document.getElementById('marker').style.display = 'none';
-            document.getElementById('world-view').style.display = 'block';
-        } else {
-            document.getElementById('marker').style.display = 'block';
-            document.getElementById('world-view').style.display = 'none';
-        }
-    });
+    <!-- علامة مخصصة لقراءة QR code (أو أي رمز مخصص) -->
+    <a-marker type="barcode" value="5"> <!-- قيمة '5' هنا هي ID الـ QR Code -->
+      <!-- تحميل نموذج ثلاثي الأبعاد -->
+      <a-entity gltf-model="#3d-model" scale="0.5 0.5 0.5" position="0 0 0"></a-entity>
+    </a-marker>
 
-    document.querySelector('button').addEventListener('click', function() {
-        const qr = new QRious({
-            element: document.getElementById('qr-code'),
-            value: window.location.href,
-            size: 200
-        });
-    });
+    <!-- الكاميرا الخاصة بالمشهد -->
+    <a-entity camera></a-entity>
+  </a-scene>
 
-    // Add controls for the model
-    const moveUpBtn = document.getElementById('move-up');
-    const moveDownBtn = document.getElementById('move-down');
-    const rotateLeftBtn = document.getElementById('rotate-left');
-    const rotateRightBtn = document.getElementById('rotate-right');
-    const zoomInBtn = document.getElementById('zoom-in');
-    const zoomOutBtn = document.getElementById('zoom-out');
+  <!-- تعريف النموذج الثلاثي الأبعاد -->
+  <a-assets>
+    <!-- رابط تحميل النموذج بصيغة .glTF -->
+    <a-asset-item id="3d-model" src="path/to/your/model.gltf"></a-asset-item>
+  </a-assets>
 
-    let modelPosition = { x: 0, y: 0, z: 0 };
-    let modelRotation = { x: 0, y: 0, z: 0 };
-    let modelScale = 1;
-
-    moveUpBtn.addEventListener('click', () => {
-        modelPosition.y += 0.1;
-        modelEntity.setAttribute('position', modelPosition);
-    });
-
-    moveDownBtn.addEventListener('click', () => {
-        modelPosition.y -= 0.1;
-        modelEntity.setAttribute('position', modelPosition);
-    });
-
-    rotateLeftBtn.addEventListener('click', () => {
-        modelRotation.y -= 10;
-        modelEntity.setAttribute('rotation', modelRotation);
-    });
-
-    rotateRightBtn.addEventListener('click', () => {
-        modelRotation.y += 10;
-        modelEntity.setAttribute('rotation', modelRotation);
-    });
-
-    zoomInBtn.addEventListener('click', () => {
-        modelScale += 0.1;
-        modelEntity.setAttribute('scale', modelScale + ' ' + modelScale + ' ' + modelScale);
-    });
-
-    zoomOutBtn.addEventListener('click', () => {
-        modelScale -= 0.1;
-        if (modelScale < 0.1) modelScale = 0.1; // Prevent scale from getting too small
-        modelEntity.setAttribute('scale', modelScale + ' ' + modelScale + ' ' + modelScale);
-    });
-});
+</body>
+</html>
